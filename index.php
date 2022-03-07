@@ -92,6 +92,30 @@ class Human extends Creature{ //人クラス、生き物クラスから継承
     }
   }
 }
+// 魔法使いクラス
+// class MagicHuman extends Human{
+//   protected $mp;
+//   public function __construct($name, $sex, $hp, $img, $attackMin, $attackMax, $mp){
+//     parent::__construct($name, $sex, $hp, $img, $attackMin, $attackMax);
+//     $this->mp = $mp;
+//   }
+//   public function setMp($num){
+//     $this->mp = $num;
+//   }
+//   public function getMp(){ //性別を返すメソッド
+//     return $this->mp;
+//   }
+//   public function attack($targetObj){ //アタックメソッドをオーバーライド
+//     if(!mt_rand(0,2)){ //3分の1の確率で魔法攻撃
+//       History::set($this->name.'の魔法攻撃!!');
+//       $targetObj->setHp( $targetObj->getHp() - $this->attack);
+//       History::set($this->attack.'ポイントのダメージを受けた！');
+//     }else{
+//       parent::attack($targetObj); //アタックメソッドを継承
+//     }
+//   }
+// }
+
 // 神様クラス
 class God extends Creature{ //人クラス、生き物クラスから継承
   public function __construct($name, $img) { //継承したこれらは人クラスでも共通して使う
@@ -155,7 +179,7 @@ class God extends Creature{ //人クラス、生き物クラスから継承
     // return array($_SESSION['human']->attackMin, $_SESSION['human']->attackMax);
     // return array($human->attackMin, $human->attackMax);
   }
-  static public function plusHp($targetObj){
+  public function plusHp($targetObj){
     global $human;
     var_dump(get_object_vars($human));
     // $targetObj->getHp();
@@ -170,8 +194,9 @@ class God extends Creature{ //人クラス、生き物クラスから継承
     // $targetObj->setHp($targetObj->hp * 2);
     // $human->setHp($human->getHp() * 2);
     error_log($human->getHp());
-    $human->setHp($human->gethp() * 2);
-    $_SESSION['human'] = $human->getHp() * 2;
+    $human->setHp($human->hp * 2);
+    error_log($human->getHp());
+    // $_SESSION['human'] = $human->getHp() * 2;
     // error_log($human->hp);
     // $human->setHp($max);
     // $human->hp = $human->hp + $human->hp;
@@ -180,7 +205,7 @@ class God extends Creature{ //人クラス、生き物クラスから継承
     // $human->getHp($max);
     // $targetObj->getHp();
     // History::set($targetObj->getHp().'神様が丈夫にしてくれた！');
-    History::set($targetObj->hp.'神様が丈夫にしてくれた！');
+    // History::set($targetObj->hp.'神様が丈夫にしてくれた！');
     // $targetObj->getHp() = $max;
     // if($targetObj->getHp()+$recoveryPoint >= $max)
     //   $targetObj->setHp($max);
@@ -189,7 +214,7 @@ class God extends Creature{ //人クラス、生き物クラスから継承
     History::set('最大HPが2倍になった！');
     // History::set($max.'最大HPが2倍になった！');
     // History::set($human->hp.'の回復！素材');
-    var_dump(get_object_vars($targetObj));
+    // var_dump(get_object_vars($targetObj));
     var_dump(get_object_vars($human));
     // return $human;
     // return $targetObj->hp;
@@ -298,33 +323,33 @@ $monsters[] = new Monster( 'フランケン', 100, 'img/monster01.png', 20, 40 )
 // $monsters[] = new FlyMonster( 'レッドドラゴン', 180, 'img/monster10.jpg', 50, 80 );
 $monsters[] = new God('神様', 'img/god.png');
 
-// function createMonster(){
-//   global $monsters;
-//   $monster =  $monsters[mt_rand(0, 1)];
-//   History::set($monster->getName().'が現れた！');
-//   if(empty($_SESSION['monster'])){
-//     $_SESSION['monster'] = $monster;
-//     var_dump($_SESSION['monster']);
-//   }else{
-//     $_SESSION['god'] = $monster;
-//     var_dump($_SESSION['monster']);
-//   }
-// }
-function createSomething(){
+function createMonster(){
   global $monsters;
   global $human;
   $monster =  $monsters[mt_rand(0, 1)];
   History::set($monster->getName().'が現れた！');
-  error_log($human->getHp().'クリエイト中');
-  if($monster instanceof God){
-    error_log($human->getHp().'クリエイト中');
-    $_SESSION['god'] = $monster;
-    error_log($human->getHp().'クリエイト中');
-  }else if($monster instanceof Monster){
+  // if(empty($_SESSION['monster'])){
+    error_log($human->getHp().'クリエイト中mae');
     $_SESSION['monster'] = $monster;
-  };
-  error_log($human->getHp().'クリエイト中最後');
+    error_log($human->getHp().'クリエイト中最後');
+    // var_dump($_SESSION['monster']);
+  // }
 }
+// function createSomething(){
+//   global $monsters;
+//   global $human;
+//   $monster =  $monsters[mt_rand(0, 1)];
+//   History::set($monster->getName().'が現れた！');
+//   error_log($human->getHp().'クリエイト中');
+//   if($monster instanceof God){
+//     error_log($human->getHp().'クリエイト中');
+//     $_SESSION['god'] = $monster;
+//     error_log($human->getHp().'クリエイト中');
+//   }else if($monster instanceof Monster){
+//     $_SESSION['monster'] = $monster;
+//   };
+//   error_log($human->getHp().'クリエイト中最後');
+// }
 function createHuman(){
   global $human;
   $_SESSION['human'] =  $human;
@@ -334,8 +359,8 @@ function init(){
   History::set('初期化します！');
   $_SESSION['knockDownCount'] = 0;
   createHuman();
-  // createMonster();
-  createSomething();
+  createMonster();
+  // createSomething();
 }
 function gameOver(){
   $_SESSION = array();
@@ -378,8 +403,8 @@ if(!empty($_POST)){
         if($_SESSION['monster']->getHp() <= 0){
           History::set($_SESSION['monster']->getName().'を倒した！');
           $_SESSION['monster'] = '';
-          // createMonster();
-          createSomething();
+          createMonster();
+          // createSomething();
           $_SESSION['knockDownCount'] = $_SESSION['knockDownCount']+1;
         }
       }
@@ -390,42 +415,44 @@ if(!empty($_POST)){
         $_SESSION['recoveryLimit'] = 0;
       }
       $_SESSION['recoveryLimit']++;
-      History::set($_SESSION['human']->getName().'の回復！');
+      History::set($human->getName().'の回復！');
       $_SESSION['human']->recovery($_SESSION['human']);
 
     }elseif($maxRecoveryFlg){
       error_log('全回復POSTされた！');
       // 回復するを押した場合
-      god::maxRecovery($_SESSION['human']);
-      $_SESSION['god'] = '';
+      $_SESSION['monster']->maxRecovery($_SESSION['human']);
+      $_SESSION['monster'] = '';
       // return $_SESSION['human'];
-      createSomething();
+      createMonster();
 
     }elseif($powerUpFlg){//パワーアップ
       error_log('パワーPOSTされた！');
-      god::powerUp($_SESSION['human']);
+      $_SESSION['monster']->powerUp($_SESSION['human']);
       // god::powerUp($human);
-      $_SESSION['god'] = '';//セッションをからにする、入っているとまた次もコマンドがおかしいことになるから
+      // $_SESSION['monster'] = '';//セッションをからにする、入っているとまた次もコマンドがおかしいことになるから
       // $human->attackMax;
       // History::set($human->attackMin.'の回復！');
       History::set($_SESSION['human']->attackMin.'の回復！');
-      createSomething();
+      createMonster();
         // return $_SESSION['human']->attackMin;
 
       }elseif($plusHpFlg){
         error_log('体力2倍POSTされた！');
         // $_SESSION['god']::plusHp($_SESSION['human']);
-        // god::plusHp($human);
-        $_SESSION['god']->plusHp($_SESSION['human']);
+        // $_SESSION['god']->plusHp($human);
+        $_SESSION['monster']->plusHp($human);
         error_log($human->getHp().'体力にばいあと');
         // $_SESSION['god'] = '';
         // return $_SESSION['human'];
         error_log($human->getHp().'クリエイト');
-        createSomething();
+        createMonster();
+        // createSomething();
+        // return $human;
   }else{ //逃げるを押した場合
         History::set('逃げた！');
-        // createMonster();
-        createSomething();
+        createMonster();
+        // createSomething();
       }
       $_POST = array();
     }
@@ -498,7 +525,7 @@ if(!empty($_POST)){
         <form method="post">
           <input type="submit" name="start" value="▶ゲームスタート">
         </form>
-      <?php }else if(!empty($_SESSION['monster'])){ ?>
+      <?php }else if($_SESSION['monster'] instanceof Monster){ ?>
         <h2><?php echo $_SESSION['monster']->getName().'が現れた!!'; ?></h2>
         <div style="height: 150px;">
           <img src="<?php echo $_SESSION['monster']->getImg(); ?>" style="width:120px; height:auto; margin:40px auto 0 auto; display:block;">
@@ -512,10 +539,10 @@ if(!empty($_POST)){
           <input type="submit" name="escape" value="▶逃げる">
           <input type="submit" name="start" value="▶ゲームリスタート">
         </form>
-        <?php }else{?>
-          <h2><?php echo $_SESSION['god']->getName().'が現れた!!'; ?></h2>
+        <?php }else if($_SESSION['monster'] instanceof God){?>
+          <h2><?php echo $_SESSION['monster']->getName().'が現れた!!'; ?></h2>
           <div style="height: 150px;">
-            <img src="<?php echo $_SESSION['god']->getImg(); ?>" style="width:120px; height:auto; margin:40px auto 0 auto; display:block;">
+            <img src="<?php echo $_SESSION['monster']->getImg(); ?>" style="width:120px; height:auto; margin:40px auto 0 auto; display:block;">
           </div>
           <p>倒したモンスター数：<?php echo $_SESSION['knockDownCount']; ?></p>
           <p>勇者の残りHP：<?php echo $_SESSION['human']->getHp(); ?></p>
